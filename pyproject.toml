@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "YogiLiu", email = "YogiLiu@outlook.com" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "aiosonic>=0.25.0",
     "mpv>=1.0.8",
