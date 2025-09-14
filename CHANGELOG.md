@@ -1,3 +1,9 @@
+## 0.2.6 (2025-09-15)
+
+### Fix
+
+- **audio.maoer**: adapte error response
+
 ## 0.2.5 (2025-09-14)
 
 ### Fix
