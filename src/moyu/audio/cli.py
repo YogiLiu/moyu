@@ -27,11 +27,12 @@ async def run(settings: Settings):
             colored_id = typer.style(f"[{room_id}]", fg=typer.colors.GREEN)
         else:
             colored_id = typer.style(f"[{room_id}]", fg=typer.colors.RED)
-        typer.echo(f"{colored_id}\t{owner}\t{title}")
+        typer.echo(f"{colored_id}  {owner} / {title}")
     while True:
         choice = typer.prompt("Enter room ID to listen, or 'q' to exit")
         if choice.lower() == "q":
-            break
+            typer.echo("Bye!")
+            exit(0)
         for room in rooms:
             if room.id == choice:
                 typer.clear()
