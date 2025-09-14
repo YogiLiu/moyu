@@ -20,9 +20,11 @@ class MaoEr(AudioRoom):
         try:
             payload = RoomInfoApiRes.model_validate(res)
         except ValidationError as e:
-            raise AudioError(f"Failed to get room info, error: {e}.")
+            raise AudioError(f"Failed to get room({self.id}) info, error: {e}.")
         if payload.code != 0:
-            raise AudioError(f"Failed to get room info, code: {payload.code}")
+            raise AudioError(
+                f"Failed to get room({self.id}) info, code: {payload.code}, info: '{payload.info}'."
+            )
         return payload.info
 
     async def get_info(self) -> RoomInfoApiInfo:
