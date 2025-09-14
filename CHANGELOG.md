@@ -1,3 +1,9 @@
+## 0.2.2 (2025-09-14)
+
+### Fix
+
+- **pyproject.toml**: fix SPDX expression of license
+
 ## 0.2.1 (2025-09-14)
 
 ### Fix
