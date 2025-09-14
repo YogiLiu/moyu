@@ -1,3 +1,9 @@
+## 0.2.3 (2025-09-14)
+
+### Fix
+
+- **audio.maoer**: change output format of list
+
 ## 0.2.2 (2025-09-14)
 
 ### Fix
