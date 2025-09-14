@@ -1,3 +1,9 @@
+## 0.2.4 (2025-09-14)
+
+### Fix
+
+- **audio.maoer**: change the format of list index
+
 ## 0.2.3 (2025-09-14)
 
 ### Fix
