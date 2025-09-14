@@ -54,7 +54,7 @@ class AudioRoom(AioSonicBaseClient, metaclass=ABCMeta):
 
     async def play(self) -> None:
         url = await self.get_url()
-        self._player.play(str(url))
+        await asyncio.to_thread(self._player.play, str(url))
         try:
             await asyncio.to_thread(self._player.wait_for_playback)
         except mpv.ShutdownError as e:
