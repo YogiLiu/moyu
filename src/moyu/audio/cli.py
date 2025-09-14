@@ -23,9 +23,9 @@ async def run(settings: Settings):
         title = await room.get_title()
         status = await room.get_status()
         if status == RoomStatus.ONLINE:
-            colored_id = typer.style(f"[{idx:03d}]", fg=typer.colors.GREEN)
+            colored_id = typer.style(f"[{idx}]", fg=typer.colors.GREEN)
         else:
-            colored_id = typer.style(f"[{idx:03d}]", fg=typer.colors.RED)
+            colored_id = typer.style(f"[{idx}]", fg=typer.colors.RED)
         typer.echo(f"{colored_id}  {owner} / {title}")
     while True:
         choice = typer.prompt("Enter room ID to listen, or 'q' to exit")
