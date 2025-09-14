@@ -1,0 +1,31 @@
+[project]
+name = "moyu"
+version = "0.1.0"
+description = "Moyu at work."
+readme = "README.md"
+authors = [
+    { name = "YogiLiu", email = "YogiLiu@outlook.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "aiosonic>=0.25.0",
+    "mpv>=1.0.8",
+    "pydantic>=2.11.9",
+    "pydantic-settings>=2.10.1",
+    "typer>=0.17.4",
+]
+
+[project.scripts]
+moyu = "moyu:app"
+
+[build-system]
+requires = ["uv_build>=0.8.17,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version_scheme = "pep440"
+version_provider = "uv"
+update_changelog_on_bump = true
+major_version_zero = true

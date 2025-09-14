@@ -1,0 +1,2 @@
+class MoyuError(Exception):
+    pass
