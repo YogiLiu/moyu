@@ -1,3 +1,9 @@
+## 0.2.7 (2025-09-15)
+
+### Refactor
+
+- **live_audio**: rename audio to live_audio
+
 ## 0.2.6 (2025-09-15)
 
 ### Fix
