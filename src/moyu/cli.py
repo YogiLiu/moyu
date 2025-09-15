@@ -3,7 +3,7 @@ from functools import partial
 
 import typer
 
-from .audio import run
+from .live_audio import run
 from .config import Settings
 from .errors import MoyuError
 
@@ -13,8 +13,8 @@ warning = partial(typer.secho, fg=typer.colors.YELLOW)
 error = partial(typer.secho, fg=typer.colors.RED, err=True)
 
 
-@app.command(name="audio", help="Audio rooms.")
-def audio_rooms():
+@app.command(help="Live audio rooms.")
+def live_audio():
     # noinspection PyArgumentList
     settings = Settings()
     try:

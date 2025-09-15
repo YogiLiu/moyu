@@ -1,5 +1,5 @@
 from moyu.errors import MoyuError
 
 
-class AudioError(MoyuError):
+class LiveAudioError(MoyuError):
     pass

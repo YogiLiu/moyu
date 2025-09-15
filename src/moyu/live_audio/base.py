@@ -6,7 +6,7 @@ from typing import Any
 import mpv
 from aiosonic.base_client import AioSonicBaseClient
 from pydantic import HttpUrl
-from .errors import AudioError
+from .errors import LiveAudioError
 
 
 class RoomStatus(IntEnum):
@@ -14,7 +14,7 @@ class RoomStatus(IntEnum):
     ONLINE = 1
 
 
-class AudioRoom(AioSonicBaseClient, metaclass=ABCMeta):
+class LiveAudioRoom(AioSonicBaseClient, metaclass=ABCMeta):
     default_headers = {
         "Accept": "application/json",
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0",
@@ -58,7 +58,7 @@ class AudioRoom(AioSonicBaseClient, metaclass=ABCMeta):
         try:
             await asyncio.to_thread(self._player.wait_for_playback)
         except mpv.ShutdownError as e:
-            raise AudioError(f"Player shutdown unexpectedly: {e}.")
+            raise LiveAudioError(f"Player shutdown unexpectedly: {e}.")
         except asyncio.CancelledError:
             self._player.stop()
             raise

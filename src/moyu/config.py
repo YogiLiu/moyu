@@ -15,16 +15,19 @@ _CONFIG_PATH = Path.home() / ".config" / "moyu" / "config.toml"
 SupportedPlatform = Literal["maoer"]
 
 
-class AudioRoom(BaseModel):
+class LiveAudioRoom(BaseModel):
     id: Annotated[str, Field(min_length=1, description="Audio room ID.")]
-    platform: Annotated[SupportedPlatform, Field(description="Audio room platform.")]
+    platform: Annotated[
+        SupportedPlatform, Field(description="Live audio room platform.")
+    ]
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(toml_file=_CONFIG_PATH)
 
-    audio_rooms: Annotated[
-        list[AudioRoom], Field(default_factory=list, description="List of audio rooms.")
+    live_audio_rooms: Annotated[
+        list[LiveAudioRoom],
+        Field(default_factory=list, description="List of audio rooms."),
     ]
 
     @classmethod

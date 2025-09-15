@@ -3,13 +3,13 @@ from typing import Any
 
 from pydantic import ValidationError, HttpUrl
 
-from moyu.audio.base import AudioRoom, RoomStatus
-from moyu.audio.errors import AudioError
+from moyu.live_audio.base import LiveAudioRoom, RoomStatus
+from moyu.live_audio.errors import LiveAudioError
 
 from .models import RoomInfoApiRes, RoomInfoApiInfo
 
 
-class MaoEr(AudioRoom):
+class MaoEr(LiveAudioRoom):
     base_url = "https://fm.missevan.com/api/v2"
 
     __cached_info: RoomInfoApiInfo = None
@@ -20,9 +20,9 @@ class MaoEr(AudioRoom):
         try:
             payload = RoomInfoApiRes.model_validate(res)
         except ValidationError as e:
-            raise AudioError(f"Failed to get room({self.id}) info, error: {e}.")
+            raise LiveAudioError(f"Failed to get room({self.id}) info, error: {e}.")
         if payload.code != 0:
-            raise AudioError(
+            raise LiveAudioError(
                 f"Failed to get room({self.id}) info, code: {payload.code}, info: '{payload.info}'."
             )
         return payload.info
