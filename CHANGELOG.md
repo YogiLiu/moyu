@@ -1,3 +1,9 @@
+## 0.3.0 (2025-09-18)
+
+### Feat
+
+- **live_audio**: support bili platform
+
 ## 0.2.7 (2025-09-15)
 
 ### Refactor
