@@ -41,7 +41,7 @@ async def run(settings: Settings):
             online_rooms.append(room)
             idx += 1
     while True:
-        choice = typer.prompt("Enter room ID to listen, or 'q' to exit")
+        choice = typer.prompt("Enter index to listen, or 'q' to exit")
         if choice.lower() == "q":
             typer.echo("👋 Bye!")
             exit(0)
