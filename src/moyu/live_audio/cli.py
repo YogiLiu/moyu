@@ -55,7 +55,7 @@ async def run(settings: Settings):
         typer.clear()
         room = online_rooms[idx]
         owner = await room.get_owner()
-        typer.echo(f"🎶 Listening {owner}.")
+        typer.echo(f"🎶 Listening {room.platform} / {owner}.")
         await room.play()
         typer.echo("Done.")
         break
