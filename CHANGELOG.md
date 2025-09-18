@@ -1,3 +1,9 @@
+## 0.3.1 (2025-09-18)
+
+### Fix
+
+- **live_audio**: only display online rooms
+
 ## 0.3.0 (2025-09-18)
 
 ### Feat
