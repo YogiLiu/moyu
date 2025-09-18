@@ -2,6 +2,7 @@ import asyncio
 from functools import partial
 
 import typer
+from pydantic import ValidationError
 
 from .live_audio import run
 from .config import Settings
@@ -16,7 +17,11 @@ error = partial(typer.secho, fg=typer.colors.RED, err=True)
 @app.command(help="Live audio rooms.")
 def live_audio():
     # noinspection PyArgumentList
-    settings = Settings()
+    try:
+        settings = Settings()
+    except ValidationError as e:
+        error(f"Failed to load config, error: {e}.")
+        exit(1)
     try:
         asyncio.run(run(settings))
     except KeyboardInterrupt:

@@ -10,10 +10,15 @@ from .models import RoomInfoApiRes, RoomInfoApiInfo
 
 
 class MaoEr(LiveAudioRoom):
+    platform = "maoer"
+
     base_url = "https://fm.missevan.com/api/v2"
 
-    __cached_info: RoomInfoApiInfo = None
     __cache_lock = asyncio.Lock()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__cached_info: RoomInfoApiInfo | None = None
 
     async def _get_info(self) -> RoomInfoApiInfo:
         res: dict[str, Any] = await self.get(f"/live/{self.id}")
@@ -45,8 +50,7 @@ class MaoEr(LiveAudioRoom):
         info = await self.get_info()
         if info.room.status.open == 1:
             return RoomStatus.ONLINE
-        else:
-            return RoomStatus.OFFLINE
+        return RoomStatus.OFFLINE
 
     async def get_url(self) -> HttpUrl:
         info = await self.get_info()

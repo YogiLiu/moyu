@@ -1,21 +1,32 @@
+from typing import Type
+
 import typer
 
 from moyu.config import Settings
 from .base import LiveAudioRoom, RoomStatus
 from .errors import LiveAudioError
 from .maoer import MaoEr
+from .bili.room import Bili
+
+
+register_room_classes: list[Type[LiveAudioRoom]] = [
+    MaoEr,
+    Bili,
+]
 
 
 async def run(settings: Settings):
     if not settings.live_audio_rooms:
         raise LiveAudioError("No live_audio rooms found in config.")
     rooms: list[LiveAudioRoom] = []
+    register_room_classes_map = dict()
+    for room_cls in register_room_classes:
+        register_room_classes_map[room_cls.platform] = room_cls
     for ar in settings.live_audio_rooms:
-        match ar.platform:
-            case "maoer":
-                rooms.append(MaoEr(ar.id))
-            case _:
-                raise LiveAudioError(f"Unsupported platform: '{ar.platform}'.")
+        room_cls = register_room_classes_map.get(ar.platform)
+        if room_cls is None:
+            raise LiveAudioError(f"Unsupported platform: '{ar.platform}'.")
+        rooms.append(room_cls(ar.id))
 
     typer.echo("Available live_audio rooms:")
     for idx, room in enumerate(rooms):

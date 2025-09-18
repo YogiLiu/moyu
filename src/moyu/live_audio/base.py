@@ -1,11 +1,13 @@
 import asyncio
 from abc import ABCMeta, abstractmethod
 from enum import IntEnum
-from typing import Any
+from typing import Any, ClassVar
 
 import mpv
 from aiosonic.base_client import AioSonicBaseClient
 from pydantic import HttpUrl
+
+from moyu.config import SupportedPlatform
 from .errors import LiveAudioError
 
 
@@ -15,18 +17,20 @@ class RoomStatus(IntEnum):
 
 
 class LiveAudioRoom(AioSonicBaseClient, metaclass=ABCMeta):
+    platform: ClassVar[SupportedPlatform]
+
     default_headers = {
         "Accept": "application/json",
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:142.0) Gecko/20100101 Firefox/142.0",
         "Accept-Encoding": "gzip",
         "Connection": "keep-alive",
     }
-    _player = mpv.MPV(ytdl=True, video=False)
 
     def __init__(self, room_id: str, **kwargs):
         super().__init__()
         self._id = room_id
         self._extra_config: dict[str, Any] = kwargs
+        self._player = mpv.MPV(ytdl=True, video=False)
 
     @abstractmethod
     async def get_owner(self) -> str:

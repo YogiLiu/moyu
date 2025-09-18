@@ -12,7 +12,7 @@ from pydantic_settings import (
 
 _CONFIG_PATH = Path.home() / ".config" / "moyu" / "config.toml"
 
-SupportedPlatform = Literal["maoer"]
+SupportedPlatform = Literal["maoer", "bili"]
 
 
 class LiveAudioRoom(BaseModel):
