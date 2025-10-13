@@ -5,10 +5,12 @@ from typing import Any, ClassVar
 
 import mpv
 from aiosonic.base_client import AioSonicBaseClient
+from aiosonic.exceptions import BaseTimeout
+from aiosonic.timeout import Timeouts
 from pydantic import HttpUrl
 
 from moyu.config import SupportedPlatform
-from .errors import LiveAudioError
+from .errors import LiveAudioError, ApiTimeoutError
 
 
 class RoomStatus(IntEnum):
@@ -26,11 +28,20 @@ class LiveAudioRoom(AioSonicBaseClient, metaclass=ABCMeta):
         "Connection": "keep-alive",
     }
 
+    timeouts = Timeouts(request_timeout=32)
+
     def __init__(self, room_id: str, **kwargs):
         super().__init__()
         self._id = room_id
         self._extra_config: dict[str, Any] = kwargs
         self._player = mpv.MPV(ytdl=True, video=False)
+
+    async def request(self, method: str, url: str, **kwargs):
+        kwargs["timeouts"] = self.timeouts
+        try:
+            return await super().request(method, url, **kwargs)
+        except BaseTimeout as e:
+            raise ApiTimeoutError(f"Api time out: {e.__class__.__name__}") from e
 
     @abstractmethod
     async def get_owner(self) -> str:
