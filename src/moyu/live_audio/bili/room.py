@@ -13,13 +13,15 @@ class Bili(LiveAudioRoom):
 
     base_url = "https://api.live.bilibili.com"
 
-    __cache_info_lock = asyncio.Lock()
-    __cache_owner_lock = asyncio.Lock()
+    __info_sem = asyncio.Semaphore(2)
+    __owner_sem = asyncio.Semaphore(2)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__cached_info: RoomInfo | None = None
         self.__cached_owner: Master | None = None
+        self.__cache_info_lock = asyncio.Lock()
+        self.__cache_owner_lock = asyncio.Lock()
 
     @staticmethod
     def _parse_bili_response(res: dict, model: Type[BaseModel], context: str):
@@ -34,10 +36,11 @@ class Bili(LiveAudioRoom):
         return payload.data
 
     async def _get_info(self) -> RoomInfo:
-        res = await self.get(f"/room/v1/Room/get_info?room_id={self.id}")
-        return self._parse_bili_response(
-            res, BiliRes[RoomInfo], f"room({self.id}) info"
-        )
+        async with self.__info_sem:
+            res = await self.get(f"/room/v1/Room/get_info?room_id={self.id}")
+            return self._parse_bili_response(
+                res, BiliRes[RoomInfo], f"room({self.id}) info"
+            )
 
     async def get_info(self) -> RoomInfo:
         async with self.__cache_info_lock:
@@ -46,9 +49,12 @@ class Bili(LiveAudioRoom):
             return self.__cached_info
 
     async def _get_owner(self) -> Master:
-        info = await self.get_info()
-        res = await self.get(f"/live_user/v1/Master/info?uid={info.uid}")
-        return self._parse_bili_response(res, BiliRes[Master], f"owner({self.id}) info")
+        async with self.__owner_sem:
+            info = await self.get_info()
+            res = await self.get(f"/live_user/v1/Master/info?uid={info.uid}")
+            return self._parse_bili_response(
+                res, BiliRes[Master], f"owner({self.id}) info"
+            )
 
     async def get_owner(self) -> str:
         async with self.__cache_owner_lock:

@@ -16,8 +16,8 @@ error = partial(typer.secho, fg=typer.colors.RED, err=True)
 
 @app.command(help="Live audio rooms.")
 def live_audio():
-    # noinspection PyArgumentList
     try:
+        # noinspection PyArgumentList
         settings = Settings()
     except ValidationError as e:
         error(f"Failed to load config, error: {e}.")
@@ -31,5 +31,5 @@ def live_audio():
         error(str(e))
         exit(1)
     except Exception as e:
-        error(f"Unexpected error: {e}")
+        error(f"Unexpected error: {type(e).__name__}<'{e}'>")
         exit(1)
