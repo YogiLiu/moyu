@@ -1,3 +1,13 @@
+## 0.4.0 (2025-10-13)
+
+### Feat
+
+- **live_audio**: add platform to listening text
+
+### Fix
+
+- **live_audio**: use gather
+
 ## 0.3.2 (2025-09-18)
 
 ### Fix
