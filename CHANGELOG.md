@@ -1,3 +1,9 @@
+## 0.5.1 (2025-12-24)
+
+### Refactor
+
+- **live_audio**: replace aiosonic to aiohttp
+
 ## 0.5.0 (2025-10-13)
 
 ### Feat
