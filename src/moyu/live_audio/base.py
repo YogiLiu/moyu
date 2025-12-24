@@ -1,12 +1,10 @@
+import aiohttp
 import asyncio
 from abc import ABCMeta, abstractmethod
 from enum import IntEnum
 from typing import Any, ClassVar
 
 import mpv
-from aiosonic.base_client import AioSonicBaseClient
-from aiosonic.exceptions import BaseTimeout
-from aiosonic.timeout import Timeouts
 from pydantic import HttpUrl
 
 from moyu.config import SupportedPlatform
@@ -18,8 +16,9 @@ class RoomStatus(IntEnum):
     ONLINE = 1
 
 
-class LiveAudioRoom(AioSonicBaseClient, metaclass=ABCMeta):
+class LiveAudioRoom(aiohttp.ClientSession, metaclass=ABCMeta):
     platform: ClassVar[SupportedPlatform]
+    base_url: ClassVar[str] = ""
 
     default_headers = {
         "Accept": "application/json",
@@ -28,19 +27,21 @@ class LiveAudioRoom(AioSonicBaseClient, metaclass=ABCMeta):
         "Connection": "keep-alive",
     }
 
-    timeouts = Timeouts(request_timeout=32)
+    timeout = aiohttp.ClientTimeout(total=60)
 
     def __init__(self, room_id: str, **kwargs):
-        super().__init__()
+        base_url = self.base_url.rstrip("/") + "/"
+        super().__init__(
+            base_url=base_url, headers=self.default_headers, timeout=self.timeout
+        )
         self._id = room_id
         self._extra_config: dict[str, Any] = kwargs
         self._player = mpv.MPV(ytdl=True, video=False)
 
-    async def request(self, method: str, url: str, **kwargs):
-        kwargs["timeouts"] = self.timeouts
+    async def request(self, *args, **kwargs):
         try:
-            return await super().request(method, url, **kwargs)
-        except BaseTimeout as e:
+            return await super().request(*args, **kwargs)
+        except asyncio.TimeoutError as e:
             raise ApiTimeoutError(f"Api time out: {e.__class__.__name__}") from e
 
     @abstractmethod

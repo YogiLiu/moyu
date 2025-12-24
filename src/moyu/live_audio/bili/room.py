@@ -1,7 +1,7 @@
 import asyncio
-from typing import Type
+from typing import Type, Any
 
-from pydantic import HttpUrl, ValidationError, BaseModel
+from pydantic import HttpUrl, ValidationError
 
 from moyu.live_audio.base import LiveAudioRoom, RoomStatus
 from moyu.live_audio.errors import LiveAudioError
@@ -24,7 +24,7 @@ class Bili(LiveAudioRoom):
         self.__cache_owner_lock = asyncio.Lock()
 
     @staticmethod
-    def _parse_bili_response(res: dict, model: Type[BaseModel], context: str):
+    def _parse_bili_response(res: dict, model: Type[BiliRes], context: str):
         try:
             payload = model.model_validate(res)
         except ValidationError as e:
@@ -37,10 +37,11 @@ class Bili(LiveAudioRoom):
 
     async def _get_info(self) -> RoomInfo:
         async with self.__info_sem:
-            res = await self.get(f"/room/v1/Room/get_info?room_id={self.id}")
-            return self._parse_bili_response(
-                res, BiliRes[RoomInfo], f"room({self.id}) info"
-            )
+            async with self.get(f"/room/v1/Room/get_info?room_id={self.id}") as res:
+                body: dict[str, Any] = await res.json()
+                return self._parse_bili_response(
+                    body, BiliRes[RoomInfo], f"room({self.id}) info"
+                )
 
     async def get_info(self) -> RoomInfo:
         async with self.__cache_info_lock:
@@ -51,10 +52,11 @@ class Bili(LiveAudioRoom):
     async def _get_owner(self) -> Master:
         async with self.__owner_sem:
             info = await self.get_info()
-            res = await self.get(f"/live_user/v1/Master/info?uid={info.uid}")
-            return self._parse_bili_response(
-                res, BiliRes[Master], f"owner({self.id}) info"
-            )
+            async with self.get(f"/live_user/v1/Master/info?uid={info.uid}") as res:
+                body: dict = await res.json()
+                return self._parse_bili_response(
+                    body, BiliRes[Master], f"owner({self.id}) info"
+                )
 
     async def get_owner(self) -> str:
         async with self.__cache_owner_lock:

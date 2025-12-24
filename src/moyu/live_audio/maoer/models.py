@@ -26,4 +26,4 @@ class RoomInfoApiInfo(BaseModel):
 
 class RoomInfoApiRes(BaseModel):
     code: Annotated[int, Field(description="API status code.")]
-    info: Annotated[RoomInfoApiInfo | str, Field(description="API payload.")]
+    info: Annotated[RoomInfoApiInfo, Field(description="API payload.")]

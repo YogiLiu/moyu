@@ -12,7 +12,7 @@ from .models import RoomInfoApiRes, RoomInfoApiInfo
 class MaoEr(LiveAudioRoom):
     platform = "maoer"
 
-    base_url = "https://fm.missevan.com/api/v2"
+    base_url = "https://fm.missevan.com"
 
     __sem = asyncio.Semaphore(5)
 
@@ -23,15 +23,18 @@ class MaoEr(LiveAudioRoom):
 
     async def _get_info(self) -> RoomInfoApiInfo:
         async with self.__sem:
-            res: dict[str, Any] = await self.get(f"/live/{self.id}")
-            try:
-                payload = RoomInfoApiRes.model_validate(res)
-            except ValidationError as e:
-                raise LiveAudioError(f"Failed to get room({self.id}) info, error: {e}.")
-            if payload.code != 0:
-                raise LiveAudioError(
-                    f"Failed to get room({self.id}) info, code: {payload.code}, info: '{payload.info}'."
-                )
+            async with self.get(f"/api/v2/live/{self.id}") as res:
+                try:
+                    body: dict[str, Any] = await res.json()
+                    payload = RoomInfoApiRes.model_validate(body)
+                except ValidationError as e:
+                    raise LiveAudioError(
+                        f"Failed to get room({self.id}) info, error: {e}."
+                    )
+                if payload.code != 0:
+                    raise LiveAudioError(
+                        f"Failed to get room({self.id}) info, code: {payload.code}, info: '{payload.info}'."
+                    )
             return payload.info
 
     async def get_info(self) -> RoomInfoApiInfo:
